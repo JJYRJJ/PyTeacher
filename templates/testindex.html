@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>编程挑战</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #left, #right {
+            float: left;
+            width: 50%;
+        }
+        #problem_description_display, #user_code_display, #result_display, #answer_display {
+            border: 1px solid #000;
+            padding: 10px;
+            margin-bottom: 10px;
+            width: calc(100% - 22px); /* Adjust width to account for padding and border */
+        }
+        #problem_description_display {
+            height: 150px; /* Keep the original height for the problem description display */
+        }
+        #user_code_display {
+            height: 450px; /* Increase the height for the user code display */
+        }
+        #result_display {
+            height: 50px; /* Decrease the height for the result display */
+        }
+        #answer_display {
+            height: 550px; /* Increase the height for the answer display */
+            white-space: pre-wrap; /* Ensure that line breaks are respected */
+        }
+        textarea {
+            width: calc(100% - 22px);
+            margin-bottom: 10px;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        /* Clear floats after the columns */
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+    </style>
+</head>
+<body>
+    <div class="clearfix">
+        <div id="left">
+            <div><strong>题目描述</strong></div>
+            <div id="problem_description_display">点击"下一题"开始答题</div>
+            <div><strong>你的代码</strong></div>
+            <textarea id="user_code_display" >点击"下一题"开始答题</textarea> <!-- 可编辑的文本框 -->
+            <button id="next">下一题</button>
+        </div>
+        <div id="right">
+            <button id="check">检查</button>
+            <div id="result_display" readonly></div>
+            <button id="answer">解答</button>
+            <div id="answer_display" readonly></div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            $('#next').click(function(){
+                $.post('/next_question', function(data){
+                    $('#problem_description_display').text(data.problem_description);
+                    $('#user_code_display').val(data.user_code); // 更新为.val()以反映文本框的内容
+                    $('#result_display').text('');
+                    $('#answer_display').text('');
+                });
+            });
+
+            $('#check').click(function(){
+                $.post('/check_answer', { 'answer': $('#user_code_display').val() }, function(data){ // 更新为#user_code_display
+                    $('#result_display').text(data.is_correct ? '正确' : '错误');
+                });
+            });
+
+            $('#answer').click(function(){
+                $.post('/get_answer', { 'answer': $('#user_code_display').val() }, function(data){
+                    $('#answer_display').text(data.answer_analysis);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "api_key": "a9f55444fa2841079c5ddb66aa969270",
+  "endpoint": "https://testjerrynay.openai.azure.com/",
+  "api_version": "2024-02-01",
+  "model": "gpt4o",
+  "temperature": 0.5,
+  "max_retry": 3,
+  "data_dir": "data/QuestionSamples",
+  "prompt_genQuestion": "prompts/GenQuestion.txt",
+  "prompt_CheckAnswer": "prompts/CheckAnswer.txt"
+}
