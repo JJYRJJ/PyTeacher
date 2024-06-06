@@ -80,7 +80,7 @@ class Teacher:
         self.add_message(messages, "生成一道题目", role="user")
 
         response = self.call_chat(messages, keywords=["题目描述：", "# Python", "# ENDPython"])
-        log_info("[Question] GPT response: " + response)
+        # log_info("[Question] GPT response: " + response)
         if not (len(response) > 0 and "题目描述：" in response and "# Python" in response and "# ENDPython" in response):
             return False
 
@@ -102,7 +102,7 @@ class Teacher:
         prompt = self.prompt_CheckAnswer.replace("#QUESTION#", self.question).replace("#INITIAL_CODE#", self.init_code).replace("#USER_ANSWER#", self.user_answer)
         self.add_message(messages, prompt, role="system")
         response = self.call_chat(messages).strip()
-        log_info("[Check Answer] GPT response: " + response)
+        # log_info("[Check Answer] GPT response: " + response)
         # response 第一行回答整错或错误，后面是正确答案和解释
         responses = response.split("\n", 1)
         self.is_correct = True if "正确" in responses[0] else False
