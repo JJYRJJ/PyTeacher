@@ -1,0 +1,15 @@
+题目描述： 彤彤在房间里找到一些数字卡片，她统计了每张卡片上的数字，请你帮助她找到一共有多少种不同的数字。请修改[请在这里补全代码]的部分，不要修改其他部分。
+
+# Python
+num_cards = [1, 3, 7, 2, 3, 2, 2, 0, 11, 3, 5]
+unique_nums = []
+
+for num in num_cards:
+    if 请在这里补全代码:
+        unique_nums.append(num)
+
+num_unique = 请在这里补全代码
+
+print(f"一共有{num_unique}种不同的数字")
+
+# ENDPython
