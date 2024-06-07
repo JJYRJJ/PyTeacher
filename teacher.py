@@ -25,10 +25,12 @@ class Teacher:
 
         # 题目相关初始化
         self.question = ""
+        self.n_example = self.config["n_example"]
         self.init_code = ""
         self.user_answer = ""
         self.is_correct = False
         self.explanation = ""
+        self.p_useSample = self.config["p_useSample"]  # 直接使用示例的概率
 
         log_info("Teacher initialized")
 
@@ -71,16 +73,26 @@ class Teacher:
         datapath = self.config["data_dir"]
         examples = os.listdir(datapath)
         examples = [e for e in examples if e.endswith(".txt")]
-        example_path = random.choice(examples)
-        with open(os.path.join(datapath, example_path), "r", encoding='utf-8') as f:
-            example = f.read()
-        prompt = self.prompt_genQuestion.replace("#EXAMPLE#", example)
-        messages = []
-        self.add_message(messages, prompt, role="system")
-        self.add_message(messages, "生成一道题目", role="user")
+        if random.random() < self.p_useSample:
+            example_path = random.choice(examples)
+            with open(os.path.join(datapath, example_path), "r", encoding='utf-8') as f:
+                response = f.read()
+            log_info("[Question] Use example: " + response)
+        else:
+            n_example = min(self.n_example, len(examples))
+            example_paths = random.sample(examples, n_example)
+            example_str = ""
+            for i, example_path in enumerate(example_paths):
+                with open(os.path.join(datapath, example_path), "r", encoding='utf-8') as f:
+                    example = f.read()
+                    example_str += f"示例{i + 1}:\n{example}\n\n"
+            prompt = self.prompt_genQuestion.replace("#EXAMPLE#", example_str)
+            messages = []
+            self.add_message(messages, prompt, role="system")
+            self.add_message(messages, "生成一道题目", role="user")
 
-        response = self.call_chat(messages, keywords=["题目描述：", "# Python", "# ENDPython"])
-        log_info("[Question] GPT response: " + response)
+            response = self.call_chat(messages, keywords=["题目描述：", "# Python", "# ENDPython"])
+            log_info("[Question] GPT response: " + response)
         if not (len(response) > 0 and "题目描述：" in response and "# Python" in response and "# ENDPython" in response):
             return False
 
@@ -107,7 +119,7 @@ class Teacher:
         prompt = self.prompt_CheckAnswer.replace("#QUESTION#", self.question).replace("#INITIAL_CODE#", self.init_code).replace("#USER_ANSWER#", self.user_answer)
         self.add_message(messages, prompt, role="system")
         response = self.call_chat(messages).strip()
-        # log_info("[Check Answer] GPT response: " + response)
+        log_info("[Check Answer] GPT response: " + response)
         # response 第一行回答整错或错误，后面是正确答案和解释
         responses = response.split("\n", 1)
         self.is_correct = True if "正确" in responses[0] else False

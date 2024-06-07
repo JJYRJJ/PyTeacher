@@ -7,5 +7,7 @@
   "max_retry": 3,
   "data_dir": "data/QuestionSamples",
   "prompt_genQuestion": "prompts/GenQuestion.txt",
-  "prompt_CheckAnswer": "prompts/CheckAnswer.txt"
+  "prompt_CheckAnswer": "prompts/CheckAnswer.txt",
+  "n_example": 3,
+  "p_useSample": 0.1
 }
