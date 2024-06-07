@@ -80,7 +80,7 @@ class Teacher:
         self.add_message(messages, "生成一道题目", role="user")
 
         response = self.call_chat(messages, keywords=["题目描述：", "# Python", "# ENDPython"])
-        # log_info("[Question] GPT response: " + response)
+        log_info("[Question] GPT response: " + response)
         if not (len(response) > 0 and "题目描述：" in response and "# Python" in response and "# ENDPython" in response):
             return False
 
@@ -96,6 +96,11 @@ class Teacher:
         return True
 
     def check_answer(self, user_answer=None):
+        if self.question == "":
+            self.is_correct = False
+            self.explanation = "先点击下一题生成题目吧"
+            return
+
         if user_answer is not None:
             self.user_answer = user_answer
         messages = []

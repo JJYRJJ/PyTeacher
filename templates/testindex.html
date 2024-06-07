@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>编程挑战</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
     <style>
+        body {
+            font-size: 18px;
+        }
+        button {
+            font-size: 18px;
+        }
+        strong {
+            font-size: 24px;
+        }
         #left, #right {
             float: left;
             width: 50%;
@@ -16,7 +28,7 @@
             width: calc(100% - 22px); /* Adjust width to account for padding and border */
         }
         #problem_description_display {
-            height: 150px; /* Keep the original height for the problem description display */
+            height: 250px; /* Keep the original height for the problem description display */
         }
         #user_code_display {
             height: 450px; /* Increase the height for the user code display */
@@ -25,14 +37,12 @@
             height: 50px; /* Decrease the height for the result display */
         }
         #answer_display {
-            height: 550px; /* Increase the height for the answer display */
+            height: 900px; /* Increase the height for the answer display */
             white-space: pre-wrap; /* Ensure that line breaks are respected */
         }
-        textarea {
-            width: calc(100% - 22px);
-            margin-bottom: 10px;
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 16px;
+        .CodeMirror {
+            height: 700px;
+            font-size: 20px;
         }
         button {
             width: 100%;
@@ -48,12 +58,20 @@
 </head>
 <body>
     <div class="clearfix">
+        <h1 style="text-align: center;">编程大挑战</h1>
         <div id="left">
+            <button id="next">下一题</button>
             <div><strong>题目描述</strong></div>
             <div id="problem_description_display">点击"下一题"开始答题</div>
             <div><strong>你的代码</strong></div>
             <textarea id="user_code_display" >点击"下一题"开始答题</textarea> <!-- 可编辑的文本框 -->
-            <button id="next">下一题</button>
+            <script>
+                var editor = CodeMirror.fromTextArea(document.getElementById("user_code_display"), {
+                    mode: "python",
+                    lineNumbers: true,
+                    theme: "default"
+                });
+            </script>
         </div>
         <div id="right">
             <button id="check">检查</button>
@@ -68,20 +86,20 @@
             $('#next').click(function(){
                 $.post('/next_question', function(data){
                     $('#problem_description_display').text(data.problem_description);
-                    $('#user_code_display').val(data.user_code); // 更新为.val()以反映文本框的内容
+                    editor.setValue(data.user_code);
                     $('#result_display').text('');
                     $('#answer_display').text('');
                 });
             });
 
             $('#check').click(function(){
-                $.post('/check_answer', { 'answer': $('#user_code_display').val() }, function(data){ // 更新为#user_code_display
+                $.post('/check_answer', { 'answer': editor.getValue() }, function(data){ // 更新为#user_code_display
                     $('#result_display').text(data.is_correct ? '正确' : '错误');
                 });
             });
 
             $('#answer').click(function(){
-                $.post('/get_answer', { 'answer': $('#user_code_display').val() }, function(data){
+                $.post('/get_answer', { 'answer': editor.getValue() }, function(data){
                     $('#answer_display').text(data.answer_analysis);
                 });
             });
