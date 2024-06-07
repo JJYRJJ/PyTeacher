@@ -17,6 +17,9 @@
         strong {
             font-size: 24px;
         }
+        img.loading {
+            height: 2em;
+        }
         #left, #right {
             float: left;
             width: 50%;
@@ -74,9 +77,9 @@
             </script>
         </div>
         <div id="right">
-            <button id="check">检查</button>
+            <button id="check">检查答案</button>
             <div id="result_display" readonly></div>
-            <button id="answer">解答</button>
+            <button id="answer">显示解答</button>
             <div id="answer_display" readonly></div>
         </div>
     </div>
@@ -84,6 +87,8 @@
     <script>
         $(document).ready(function(){
             $('#next').click(function(){
+                $('#problem_description_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="加载中..." class="loading" />');
+                editor.setValue("生成中...");
                 $.post('/next_question', function(data){
                     $('#problem_description_display').text(data.problem_description);
                     editor.setValue(data.user_code);
@@ -93,13 +98,18 @@
             });
 
             $('#check').click(function(){
+                $('#result_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="加载中..." class="loading" />');
+                $('#answer_display').text(''); // 清空"解答"文本框
                 $.post('/check_answer', { 'answer': editor.getValue() }, function(data){ // 更新为#user_code_display
                     $('#result_display').text(data.is_correct ? '正确' : '错误');
                 });
             });
 
             $('#answer').click(function(){
+                $('#answer_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="加载中..." class="loading" />');
+                $('#result_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="加载中..." class="loading" />');
                 $.post('/get_answer', { 'answer': editor.getValue() }, function(data){
+                    $('#result_display').text(data.is_correct ? '正确' : '错误'); // 更新答案
                     $('#answer_display').text(data.answer_analysis);
                 });
             });

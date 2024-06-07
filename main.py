@@ -2,7 +2,7 @@ from flask import Flask, render_template, jsonify, request
 from teacher import Teacher
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', template_folder='templates')
 model = Teacher()
 
 @app.route('/')
@@ -36,8 +36,9 @@ def get_answer():
     user_answer = request.form['answer']
     if user_answer != model.user_answer or model.explanation == "":
         model.check_answer(user_answer)
+    is_correct = model.is_correct
     answer_analysis = model.explanation
-    return jsonify({'answer_analysis': answer_analysis})
+    return jsonify({'is_correct': is_correct, 'answer_analysis': answer_analysis})
 
 if __name__ == '__main__':
     app.run(debug=True)
