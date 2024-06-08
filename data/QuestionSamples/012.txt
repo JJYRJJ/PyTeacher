@@ -1,0 +1,11 @@
+题目描述：小明正在学习如何用Python来计算长方形的面积。他有一个长方形的长和宽，请你帮他写一个函数来计算这个长方形的面积。请修改[请在这里补全代码]的部分，不要修改其他部分。
+
+# Python
+def calculate_area(length, width):
+    area = 请在这里补全代码
+    return area
+
+length = 5
+width = 3
+print(f"长{length}和宽{width}的长方形的面积是：{calculate_area(length, width)}")
+# ENDPython

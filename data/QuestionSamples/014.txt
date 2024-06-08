@@ -1,0 +1,15 @@
+题目描述：在森林里有一只小兔子叫小白，小白收集了一些胡罗卜，小白随机挑选了3根胡罗卜，想知道这3根胡罗卜的长度是否能组成一个三角形，如果能组成三角形，输出YES，否则输出NO。请你帮小白完成这个Python函数吧！请修改[请在这里补全代码]的部分，不要修改其他部分。
+
+# Python
+def is_triangle(a, b, c):
+    # a, b, c是三根胡罗卜的长度
+    if 请在这里补全代码:
+        return "YES"
+    else:
+        return "NO"
+
+carrot1 = 3
+carrot2 = 4
+carrot3 = 5
+print(is_triangle(carrot1, carrot2, carrot3))  # YES
+# ENDPython

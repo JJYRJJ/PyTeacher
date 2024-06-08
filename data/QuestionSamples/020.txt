@@ -1,0 +1,13 @@
+题目描述：请你实现一个Python函数，输入一个整数num，找到第一个比num大，并且可以被7整除的数字。请修改[请在这里补全代码]的部分，不要修改其他部分。
+
+# Python
+def findNumber(num):
+    result = num + 1
+    while True:
+        if 请在这里补全代码:
+            请在这里补全代码
+        result += 1
+    return result
+
+print(findNumber(10))  # 找到第一个比10大，并且可以被7整除的数字，答案是14
+# ENDPython

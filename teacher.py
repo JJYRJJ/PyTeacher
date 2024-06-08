@@ -47,7 +47,7 @@ class Teacher:
         self.is_correct = ""
         self.explanation = ""
 
-    def call_chat(self, messages, keywords=None):
+    def call_chat(self, messages, keywords_all=None, keywords_any=None):
         for _ in range(self.max_retry):
             try:
                 response = self.client.chat.completions.create(
@@ -55,8 +55,13 @@ class Teacher:
                     messages=messages
                 )
                 res = response.choices[0].message.content
-                if keywords is not None:
-                    if all(keyword in res for keyword in keywords):
+                if keywords_all is not None:
+                    if all(keyword in res for keyword in keywords_all):
+                        return res
+                    else:
+                        continue
+                if keywords_any is not None:
+                    if any(keyword in res for keyword in keywords_any):
                         return res
                     else:
                         continue
@@ -77,7 +82,7 @@ class Teacher:
             example_path = random.choice(examples)
             with open(os.path.join(datapath, example_path), "r", encoding='utf-8') as f:
                 response = f.read()
-            log_info("[Question] Use example: " + response)
+            # log_info("[Question] Use example: " + response)
         else:
             n_example = min(self.n_example, len(examples))
             example_paths = random.sample(examples, n_example)
@@ -91,8 +96,8 @@ class Teacher:
             self.add_message(messages, prompt, role="system")
             self.add_message(messages, "生成一道题目", role="user")
 
-            response = self.call_chat(messages, keywords=["题目描述：", "# Python", "# ENDPython"])
-            log_info("[Question] GPT response: " + response)
+            response = self.call_chat(messages, keywords_all=["题目描述：", "# Python", "# ENDPython"])
+            # log_info("[Question] GPT response: " + response)
         if not (len(response) > 0 and "题目描述：" in response and "# Python" in response and "# ENDPython" in response):
             return False
 
@@ -112,15 +117,16 @@ class Teacher:
             self.is_correct = False
             self.explanation = "先点击下一题生成题目吧"
             return
+        print(self.question)
 
         if user_answer is not None:
             self.user_answer = user_answer
         messages = []
         prompt = self.prompt_CheckAnswer.replace("#QUESTION#", self.question).replace("#INITIAL_CODE#", self.init_code).replace("#USER_ANSWER#", self.user_answer)
         self.add_message(messages, prompt, role="system")
-        response = self.call_chat(messages).strip()
-        log_info("[Check Answer] GPT response: " + response)
+        response = self.call_chat(messages, keywords_any=["正确", "错误"]).strip()
+        # log_info("[Check Answer] GPT response: " + response)
         # response 第一行回答整错或错误，后面是正确答案和解释
-        responses = response.split("\n", 1)
+        responses = response.replace("```python", "").replace("```", "").split("\n", 1)
         self.is_correct = True if "正确" in responses[0] else False
         self.explanation = responses[1] if len(responses) > 1 else ""

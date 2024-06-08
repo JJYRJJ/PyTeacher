@@ -29,23 +29,27 @@
             padding: 10px;
             margin-bottom: 10px;
             width: calc(100% - 22px); /* Adjust width to account for padding and border */
+            height: auto;
         }
         #problem_description_display {
-            height: 250px; /* Keep the original height for the problem description display */
+            height: 250px;
         }
         #user_code_display {
-            height: 450px; /* Increase the height for the user code display */
+            height: 450px;
         }
         #result_display {
-            height: 50px; /* Decrease the height for the result display */
+            height: 50px;
         }
         #answer_display {
-            height: 900px; /* Increase the height for the answer display */
+            height: 900px;
             white-space: pre-wrap; /* Ensure that line breaks are respected */
         }
         .CodeMirror {
-            height: 700px;
+            height: 2000px;
             font-size: 20px;
+            border-top: 1px solid black;
+            border-left: 1px solid black;
+            border-right: 1px solid black;
         }
         button {
             width: 100%;
@@ -80,7 +84,16 @@
             <button id="check">检查答案</button>
             <div id="result_display" readonly></div>
             <button id="answer">显示解答</button>
-            <div id="answer_display" readonly></div>
+            <textarea id="answer_display" readonly></textarea>
+            <script>
+                var editor_answer = CodeMirror.fromTextArea(document.getElementById("answer_display"), {
+                    mode: "python",
+                    lineNumbers: false,
+                    theme: "default",
+                    readOnly: true,
+                    lineWrapping: true
+                });
+            </script>
         </div>
     </div>
 
@@ -89,28 +102,28 @@
             $('#next').click(function(){
                 $('#problem_description_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="加载中..." class="loading" />');
                 editor.setValue("生成中...");
+                $('#result_display').text('');
+                editor_answer.setValue('');
                 $.post('/next_question', function(data){
                     $('#problem_description_display').text(data.problem_description);
                     editor.setValue(data.user_code);
-                    $('#result_display').text('');
-                    $('#answer_display').text('');
                 });
             });
 
             $('#check').click(function(){
                 $('#result_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="加载中..." class="loading" />');
-                $('#answer_display').text(''); // 清空"解答"文本框
+                editor_answer.setValue(''); // 清空"解答"文本框
                 $.post('/check_answer', { 'answer': editor.getValue() }, function(data){ // 更新为#user_code_display
                     $('#result_display').text(data.is_correct ? '正确' : '错误');
                 });
             });
 
             $('#answer').click(function(){
-                $('#answer_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="加载中..." class="loading" />');
+                editor_answer.setValue('生成中...'); // 清空"解答"文本框
                 $('#result_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="加载中..." class="loading" />');
                 $.post('/get_answer', { 'answer': editor.getValue() }, function(data){
                     $('#result_display').text(data.is_correct ? '正确' : '错误'); // 更新答案
-                    $('#answer_display').text(data.answer_analysis);
+                    editor_answer.setValue(data.answer_analysis);
                 });
             });
         });
