@@ -117,7 +117,6 @@ class Teacher:
             self.is_correct = False
             self.explanation = "先点击下一题生成题目吧"
             return
-        print(self.question)
 
         if user_answer is not None:
             self.user_answer = user_answer
