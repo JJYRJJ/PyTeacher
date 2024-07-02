@@ -1,5 +1,8 @@
 import json
 import os
+import io
+import contextlib
+import traceback
 
 
 def log_info(message):
@@ -16,3 +19,13 @@ def load_config(path="config.json"):
     with open(path, 'r') as f:
         config = json.load(f)
     return config
+
+
+def execute_code(code):
+    output = io.StringIO()
+    with contextlib.redirect_stdout(output):
+        try:
+            exec(code)
+        except Exception as e:
+            return traceback.format_exc()
+    return output.getvalue()

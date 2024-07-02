@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <title>编程挑战</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
     <style>
         body {
             font-size: 18px;
+            max-height: 100vh;
         }
         button {
             font-size: 18px;
@@ -20,41 +22,77 @@
         img.loading {
             height: 2em;
         }
-        #left, #right {
-            float: left;
-            width: 50%;
-        }
-        #problem_description_display, #user_code_display, #result_display, #answer_display {
+
+        #problem_description_display, #user_code_display, #run_result_display, #result_display, #answer_display {
             border: 1px solid #000;
+            border-radius: 10px;
             padding: 10px;
             margin-bottom: 10px;
             width: calc(100% - 22px); /* Adjust width to account for padding and border */
             height: auto;
         }
         #problem_description_display {
-            height: 250px;
+            height: 200px;
         }
-        #user_code_display {
-            height: 450px;
+        #run_result_display {
+            white-space: pre-wrap; /* Ensure that line breaks are respected */
+            height: 200px;
         }
         #result_display {
-            height: 50px;
+            border: none;
+            height: 30px;
         }
         #answer_display {
-            height: 900px;
             white-space: pre-wrap; /* Ensure that line breaks are respected */
         }
-        .CodeMirror {
-            height: 2000px;
-            font-size: 20px;
-            border-top: 1px solid black;
-            border-left: 1px solid black;
-            border-right: 1px solid black;
+        .title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
         }
-        button {
-            width: 100%;
+        .CodeMirror {
+            font-size: 20px;
+            border: 1px solid black;
+            border-radius: 10px;
             margin-bottom: 10px;
         }
+
+        button {
+            width: 120px;
+            height: 35px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            vertical-align: middle;
+            justify-content: center;
+            color:rgb(24,49,83);
+        }
+        button i{
+            margin-right: 5px;
+        }
+        button:hover{
+            background-color: #ffd43b;
+            font-weight: bold;
+        }
+        .content {
+            display: flex;
+        }
+        #left, #right {
+            width: 50%;
+            padding: 10px;
+        }
+        .strong-text {
+            padding-bottom: 5px;
+            color: rgb(24,49,83);
+        }
+        .answer-check {
+            font-size: 20px;
+        }
+
         /* Clear floats after the columns */
         .clearfix::after {
             content: "";
@@ -65,36 +103,47 @@
 </head>
 <body>
     <div class="clearfix">
-        <h1 style="text-align: center;">编程大挑战</h1>
-        <div id="left">
-            <button id="next">下一题</button>
-            <div><strong>题目描述</strong></div>
-            <div id="problem_description_display">点击"下一题"开始答题</div>
-            <div><strong>你的代码</strong></div>
-            <textarea id="user_code_display" >点击"下一题"开始答题</textarea> <!-- 可编辑的文本框 -->
-            <script>
-                var editor = CodeMirror.fromTextArea(document.getElementById("user_code_display"), {
-                    mode: "python",
-                    lineNumbers: true,
-                    theme: "default"
-                });
-            </script>
+        <div class="title">
+            <img src="{{ url_for('static', filename='python.png') }}" alt=" " style="width: 100px; height: 100px; margin: 0 5px 0 0; display: block;" />
+            <h1>Python大挑战</h1>
         </div>
-        <div id="right">
-            <button id="check">检查答案</button>
-            <div id="result_display" readonly></div>
-            <button id="answer">显示解答</button>
-            <textarea id="answer_display" readonly></textarea>
-            <script>
-                var editor_answer = CodeMirror.fromTextArea(document.getElementById("answer_display"), {
-                    mode: "python",
-                    lineNumbers: false,
-                    theme: "default",
-                    readOnly: true,
-                    lineWrapping: true
-                });
-            </script>
+        <div class="content">
+            <div id="left">
+                <button id="next"><i class="fa-regular fa-hand-point-right"></i> 下一题</button>
+                <div class="strong-text"><strong>题目描述</strong></div>
+                <div id="problem_description_display">点击"下一题"开始答题</div>
+                <div class="strong-text"><strong>你的代码</strong></div>
+                <textarea id="user_code_display">#点击"下一题"开始答题</textarea> <!-- 可编辑的文本框 -->
+                <button id="run"> <i class="fa-solid fa-caret-right" style="color: green; font-size: 1.5em;"></i> 运行代码</button>
+                <div class="strong-text"><strong>运行结果</strong></div>
+                <div id="run_result_display"></div>
+                <script>
+                    var editor = CodeMirror.fromTextArea(document.getElementById("user_code_display"), {
+                        mode: "python",
+                        lineNumbers: true,
+                        theme: "default"
+                    });
+                    editor.setSize(null, "500px");
+                </script>
+            </div>
+            <div id="right">
+                <button id="check"><i class="fa-solid fa-check"></i> 检查答案</button>
+                <div id="result_display" readonly></div>
+                <button id="answer"><i class="fa-regular fa-message"></i> 显示解答</button>
+                <textarea id="answer_display" readonly></textarea>
+                <script>
+                    var editor_answer = CodeMirror.fromTextArea(document.getElementById("answer_display"), {
+                        mode: "python",
+                        lineNumbers: false,
+                        theme: "default",
+                        readOnly: true,
+                        lineWrapping: true
+                    });
+                    editor_answer.setSize(null, "900px");
+                </script>
+            </div>
         </div>
+
     </div>
 
     <script>
@@ -110,11 +159,18 @@
                 });
             });
 
+            $('#run').click(function(){
+                $('#run_result_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="运行中..." class="loading" />');
+                $.post('/run_code', { 'code': editor.getValue() }, function(data){
+                    $('#run_result_display').text(data.run_result);
+                });
+            });
+
             $('#check').click(function(){
                 $('#result_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="加载中..." class="loading" />');
                 editor_answer.setValue(''); // 清空"解答"文本框
                 $.post('/check_answer', { 'answer': editor.getValue() }, function(data){ // 更新为#user_code_display
-                    $('#result_display').text(data.is_correct ? '正确' : '错误');
+                    $('#result_display').html(data.is_correct ? '<div class="answer-check"><i class="fa-regular fa-circle-check" style="margin-right:5px; color:#41B06E"></i>正确</div>' : '<div class="answer-check"><i class="fa-regular fa-circle-xmark" style="margin-right:5px; color:#FC4100"></i>错误</div>');
                 });
             });
 
@@ -122,7 +178,7 @@
                 editor_answer.setValue('生成中...'); // 清空"解答"文本框
                 $('#result_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="加载中..." class="loading" />');
                 $.post('/get_answer', { 'answer': editor.getValue() }, function(data){
-                    $('#result_display').text(data.is_correct ? '正确' : '错误'); // 更新答案
+                    $('#result_display').html(data.is_correct ? '<div class="answer-check"><i class="fa-regular fa-circle-check" style="margin-right:5px; color:#41B06E"></i>正确</div>' : '<div class="answer-check"><i class="fa-regular fa-circle-xmark" style="margin-right:5px; color:#FC4100"></i>错误</div>'); // 更新答案
                     editor_answer.setValue(data.answer_analysis);
                 });
             });

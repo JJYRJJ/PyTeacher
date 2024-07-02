@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request
 from teacher import Teacher
+from utils import execute_code
 
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
@@ -21,6 +22,13 @@ def next_question():
         problem_description = "题目生成失败，请重试"
         user_code = "用户代码生成失败，请重试"
     return jsonify({'problem_description': problem_description, 'user_code': user_code})
+
+@app.route('/run_code', methods=['POST'])
+def run_code():
+    code = request.form['code']
+    # 执行代码并返回结果
+    result = execute_code(code)
+    return jsonify({'run_result': result})
 
 @app.route('/check_answer', methods=['POST'])
 def check_answer():
