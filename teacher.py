@@ -21,6 +21,8 @@ class Teacher:
             self.prompt_genQuestion = f.read()
         with open(self.config["prompt_CheckAnswer"], "r", encoding='utf-8') as f:
             self.prompt_CheckAnswer = f.read()
+        with open(self.config["prompt_Chat"], "r", encoding="utf-8") as f:
+            self.prompt_Chat = f.read()
         self.max_retry = self.config["max_retry"]
 
         # 题目相关初始化
@@ -31,6 +33,8 @@ class Teacher:
         self.is_correct = False
         self.explanation = ""
         self.p_useSample = self.config["p_useSample"]  # 直接使用示例的概率
+        self.chat_history = []
+        self.max_chat_turn = self.config["max_chat_turn"]
 
         log_info("Teacher initialized")
 
@@ -44,10 +48,13 @@ class Teacher:
         self.question = ""
         self.init_code = ""
         self.user_answer = ""
-        self.is_correct = ""
+        self.is_correct = False
         self.explanation = ""
+        self.chat_history = []
 
     def call_chat(self, messages, keywords_all=None, keywords_any=None):
+        # keywords_all: list, response中必须包含所有的关键词
+        # keywords_any: list, response中必须包含任意一个关键词
         for _ in range(self.max_retry):
             try:
                 response = self.client.chat.completions.create(
@@ -129,3 +136,37 @@ class Teacher:
         responses = response.replace("```python", "").replace("```", "").split("\n", 1)
         self.is_correct = True if "正确" in responses[0] else False
         self.explanation = responses[1] if len(responses) > 1 else ""
+
+    def chat(self, user_answer=None, user_input=None):
+        question = "无"
+        if self.question != "":
+            question = self.question
+
+        init_code = "无"
+        if self.init_code != "":
+            init_code = self.init_code
+
+        answer = "无"
+        if self.user_answer != "":
+            answer = self.user_answer
+        if user_answer is not None:
+            answer = user_answer
+
+        prompt = self.prompt_Chat.replace("#QUESTION#", question).replace("#INITIAL_CODE#", init_code).replace("#USER_ANSWER#", answer)
+        if len(self.chat_history) == 0:
+            self.add_message(self.chat_history, prompt, role="system")
+        else:
+            self.chat_history[0] = {"role": "system", "content": prompt}
+
+        if user_input is not None:
+            self.add_message(self.chat_history, user_input, role="user")
+
+        if len(self.chat_history) > self.max_chat_turn * 2:
+            self.chat_history = self.chat_history[0] + self.chat_history[3:]
+
+        response = self.call_chat(self.chat_history)
+        self.add_message(self.chat_history, response, role="system")
+        return response
+
+    def clear_chat_history(self):
+        self.chat_history = []

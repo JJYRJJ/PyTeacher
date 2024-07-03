@@ -23,7 +23,7 @@
             height: 2em;
         }
 
-        #problem_description_display, #user_code_display, #run_result_display, #result_display, #answer_display {
+        #problem_description_display, #user_code_display, #run_result_display, #answer_display, #chat_history, #user_input {
             border: 1px solid #000;
             border-radius: 10px;
             padding: 10px;
@@ -38,12 +38,17 @@
             white-space: pre-wrap; /* Ensure that line breaks are respected */
             height: 200px;
         }
-        #result_display {
-            border: none;
-            height: 30px;
-        }
         #answer_display {
             white-space: pre-wrap; /* Ensure that line breaks are respected */
+        }
+        #chat_history {
+            height: 300px;
+            overflow-y: auto;
+        }
+        #user_input {
+            height: 50px;
+            font-size: 18px;
+            resize: none;
         }
         .title {
             display: flex;
@@ -78,6 +83,13 @@
             background-color: #ffd43b;
             font-weight: bold;
         }
+        button:disabled {
+            color: grey;
+            pointer-events: none; /* Prevents hover and click events */
+        }
+        button:disabled:hover {
+            background-color: inherit; /* Keeps the button background unchanged on hover */
+        }
         .content {
             display: flex;
         }
@@ -92,6 +104,20 @@
         .answer-check {
             font-size: 20px;
         }
+        .user-message {
+            text-align: right;
+            display: block;
+            color: #808080;
+            margin-bottom: 10px;
+            white-space: pre-wrap;
+        }
+        .system-message {
+            text-align: left;
+            display: block;
+            color: #000080;
+            margin-bottom: 10px;
+            white-space: pre-wrap;
+        }
 
         /* Clear floats after the columns */
         .clearfix::after {
@@ -104,19 +130,18 @@
 <body>
     <div class="clearfix">
         <div class="title">
-            <img src="{{ url_for('static', filename='python.png') }}" alt=" " style="width: 100px; height: 100px; margin: 0 5px 0 0; display: block;" />
+            <img src="{{ url_for('static', filename='python.png') }}" alt=" " style="width: 60px; height: 60px; margin: 0 5px 0 0; display: block;" />
             <h1>Python大挑战</h1>
         </div>
         <div class="content">
             <div id="left">
                 <button id="next"><i class="fa-regular fa-hand-point-right"></i> 下一题</button>
+
                 <div class="strong-text"><strong>题目描述</strong></div>
                 <div id="problem_description_display">点击"下一题"开始答题</div>
+
                 <div class="strong-text"><strong>你的代码</strong></div>
                 <textarea id="user_code_display">#点击"下一题"开始答题</textarea> <!-- 可编辑的文本框 -->
-                <button id="run"> <i class="fa-solid fa-caret-right" style="color: green; font-size: 1.5em;"></i> 运行代码</button>
-                <div class="strong-text"><strong>运行结果</strong></div>
-                <div id="run_result_display"></div>
                 <script>
                     var editor = CodeMirror.fromTextArea(document.getElementById("user_code_display"), {
                         mode: "python",
@@ -125,10 +150,14 @@
                     });
                     editor.setSize(null, "500px");
                 </script>
+
+                <button id="run"> <i class="fa-solid fa-caret-right" style="color: green; font-size: 1.5em;"></i> 运行代码</button>
+                <div class="strong-text"><strong>运行结果</strong></div>
+                <div id="run_result_display"></div>
+
             </div>
             <div id="right">
                 <button id="check"><i class="fa-solid fa-check"></i> 检查答案</button>
-                <div id="result_display" readonly></div>
                 <button id="answer"><i class="fa-regular fa-message"></i> 显示解答</button>
                 <textarea id="answer_display" readonly></textarea>
                 <script>
@@ -139,16 +168,27 @@
                         readOnly: true,
                         lineWrapping: true
                     });
-                    editor_answer.setSize(null, "900px");
+                    editor_answer.setSize(null, "600px");
                 </script>
+
+                <div id="chat">
+                    <div class="strong-text"><strong>聊天</strong></div>
+                    <div id="chat_history"></div>
+                    <textarea id="user_input" placeholder="有问题尽管问我..." oninput="handleInput()"></textarea>
+                    <button id="send" disabled><i class="fa-regular fa-paper-plane" style="color: #2E86C1;"></i> 发送</button>
+                    <button id="clear" style="float: right;"><i class="fa-solid fa-broom"></i> 清空对话</button>
+                </div>
             </div>
         </div>
 
     </div>
 
     <script>
+        var isWaitingForResponse = false;
+
         $(document).ready(function(){
             $('#next').click(function(){
+                disableAllButtons();
                 $('#problem_description_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="加载中..." class="loading" />');
                 editor.setValue("生成中...");
                 $('#result_display').text('');
@@ -156,33 +196,99 @@
                 $.post('/next_question', function(data){
                     $('#problem_description_display').text(data.problem_description);
                     editor.setValue(data.user_code);
+                    enableAllButtons();
                 });
             });
 
             $('#run').click(function(){
+                disableAllButtons();
                 $('#run_result_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="运行中..." class="loading" />');
                 $.post('/run_code', { 'code': editor.getValue() }, function(data){
                     $('#run_result_display').text(data.run_result);
+                    enableAllButtons();
                 });
             });
 
             $('#check').click(function(){
-                $('#result_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="加载中..." class="loading" />');
-                editor_answer.setValue(''); // 清空"解答"文本框
+                disableAllButtons();
+                editor_answer.setValue('检查中...'); // 清空"解答"文本框
                 $.post('/check_answer', { 'answer': editor.getValue() }, function(data){ // 更新为#user_code_display
-                    $('#result_display').html(data.is_correct ? '<div class="answer-check"><i class="fa-regular fa-circle-check" style="margin-right:5px; color:#41B06E"></i>正确</div>' : '<div class="answer-check"><i class="fa-regular fa-circle-xmark" style="margin-right:5px; color:#FC4100"></i>错误</div>');
+                    editor_answer.setValue(data.has_question ? (data.is_correct ? '答案正确，太棒了！' : '答案有误，请再检查一下。') : data.answer_analysis);
+                    enableAllButtons();
                 });
             });
 
             $('#answer').click(function(){
+                disableAllButtons();
                 editor_answer.setValue('生成中...'); // 清空"解答"文本框
-                $('#result_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="加载中..." class="loading" />');
-                $.post('/get_answer', { 'answer': editor.getValue() }, function(data){
-                    $('#result_display').html(data.is_correct ? '<div class="answer-check"><i class="fa-regular fa-circle-check" style="margin-right:5px; color:#41B06E"></i>正确</div>' : '<div class="answer-check"><i class="fa-regular fa-circle-xmark" style="margin-right:5px; color:#FC4100"></i>错误</div>'); // 更新答案
+                $.post('/check_answer', { 'answer': editor.getValue() }, function(data){
                     editor_answer.setValue(data.answer_analysis);
+                    enableAllButtons();
+                });
+            });
+
+            $('#user_input').keydown(function(e){
+                // 如果按下的是回车键且没有按下Shift键
+                if(e.keyCode == 13 && !e.shiftKey){
+                    e.preventDefault(); // 阻止默认行为，即阻止换行
+                    $('#send').click(); // 触发发送按钮的点击事件
+                }
+            });
+
+            $('#send').click(function(){
+                disableAllButtons();
+                var user_input = $('#user_input').val().trim();
+                if(user_input.length > 0){
+                    $('#user_input').val('');
+                    $('#chat_history').append('<div class="user-message"><i class="fa-solid fa-user"></i> ' + user_input + '</div>');
+                    $('#chat_history').append('<div class="system-message" id="thinking"><i class="fa-solid fa-robot"></i> 思考中...</div>');
+                    $.post('/send_chat', { 'user_answer': editor.getValue(), 'user_input': user_input }, function(data){
+                        $('#thinking').remove();
+                        $('#chat_history').append('<div class="system-message"><i class="fa-solid fa-robot"></i> ' + data.response + '</div>');
+                        $('#chat_history').scrollTop($('#chat_history')[0].scrollHeight);
+                        enableAllButtons();
+                    });
+                }
+            });
+
+            $('#clear').click(function(){
+                disableAllButtons();
+                $.post('/clear_chat', function(data){
+                    $('#chat_history').empty();
+                    enableAllButtons();
                 });
             });
         });
+
+        function handleInput() {
+            if (!isWaitingForResponse)
+            {
+                var userInput = document.getElementById('user_input').value;
+                var sendButton = document.getElementById('send');
+                if (userInput.trim() === '') {
+                    sendButton.disabled = true;
+                } else {
+                    sendButton.disabled = false;
+                }
+            }
+        }
+
+        function disableAllButtons() {
+            document.querySelectorAll('button').forEach(function(button) {
+                button.disabled = true;
+            });
+            isWaitingForResponse = true;
+        }
+
+        function enableAllButtons() {
+            isWaitingForResponse = false;
+            document.querySelectorAll('button').forEach(function(button) {
+                button.disabled = false;
+            });
+            handleInput();
+        }
+
+        document.addEventListener('DOMContentLoaded', handleInput);
     </script>
 </body>
 </html>
