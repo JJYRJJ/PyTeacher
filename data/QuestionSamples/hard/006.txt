@@ -1,0 +1,25 @@
+题目描述：在一个奇妙的冒险村庄里，有一群勇士正准备出发冒险。每个勇士都有自己的名字和战斗力。请你创建一个列表来存储这些勇士的信息，并计算出村庄中战斗力最高的勇士的名字和他所战斗力。请你完成以下代码中的缺失部分。请修改[请在这里补全代码]的部分，不要修改其他部分。
+
+# Python
+# 勇士列表，每个元素是一个字典
+warriors = [
+    {"name": "Arthur", "power": 50},
+    {"name": "Merlin", "power": 85},
+    {"name": "Lancelot", "power": 75},
+    {"name": "Gawain", "power": 60},
+]
+
+# 初始化最高战斗力和对应的勇士名字
+max_power = 0
+strongest_warrior = ""
+
+# 遍历勇士列表，找出战斗力最高的勇士
+for warrior in warriors:
+    if warrior["power"] > 请在这里补全代码:
+        max_power = 请在这里补全代码
+        strongest_warrior = 请在这里补全代码
+
+# 打印结果
+print(f"战斗力最高的勇士是{strongest_warrior}，他的战斗力是{max_power}")
+
+# ENDPython

@@ -1,18 +1,16 @@
-题目描述：在一个神秘的数字森林里，有一只小松鼠名叫“栗栗”。栗栗每天都会收集一些坚果并把它们放在不同的篮子里。我们需要用Python来帮助栗栗计算它每天收集的坚果总数，并判断它是否每天都收集了至少15个坚果。让我们一起来帮帮栗栗吧！请修改[请在这里补全代码]的部分，不要修改其他部分。
+题目描述：小苹想要把她收藏的彩色铅笔按颜色进行分类。她已经按顺序记录了每支铅笔的颜色，请你帮助她统计每种颜色的铅笔有多少支。请修改[请在这里补全代码]的部分，不要修改其他部分。
 
 # Python
-daily_nuts = [
-[3, 5, 2], # 第一天的坚果
-[4, 4, 7], # 第二天的坚果
-[6, 5, 5], # 第三天的坚果
-]
+pencil_colors = ["red", "blue", "red", "green", "blue", "yellow", "green", "red"]
+color_count = {}
 
-for day_nuts in daily_nuts:
-    daily_total = 0
-    for 请在这里补全代码
-        daily_total += nuts
-        if daily_total >= 15:
-            print("栗栗今天收集了至少15个坚果！")
-        else:
-            print("栗栗今天没有收集到足够的坚果。")
+for color in pencil_colors:
+    if color not in color_count:
+        color_count[color] = 1
+    else:
+        请在这里补全代码
+
+print("每种颜色的铅笔数量是：")
+for color in color_count:
+    print(f'{color}: {color_count[color]}')
 # ENDPython

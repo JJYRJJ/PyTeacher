@@ -1,0 +1,17 @@
+题目描述：给你一个10-99之间的数字，你可以判断它能否被3整出吗？ 请你用Python实现两种不同的函数，输入一个数字，返回True或者False来判断这个数字能否被3整除。请修改[请在这里补全代码]的部分，不要修改其他部分。
+
+# Python
+# 方法1：判断数字的十位数和个位数之和是否能被3整除，可以用//和%运算符来实现
+def is_divisible_by_3_method1(num):
+    tens = 请在这里补全代码
+    units = 请在这里补全代码
+    return (tens + units) % 3 == 0
+
+# 方法2：直接判断数字能否被3整除，可以用%运算符来实现
+def is_divisible_by_3_method2(num):
+    return 请在这里补全代码
+
+num = 72
+print(is_divisible_by_3_method1(num))  # 应该输出True
+print(is_divisible_by_3_method2(num))  # 同样应该输出True
+# ENDPython

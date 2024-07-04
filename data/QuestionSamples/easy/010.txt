@@ -1,9 +1,15 @@
-题目描述：请你用实现一个Python函数，输入一个字符串，然后将字符串中的每个字符打印出来，每个字符打印一行。请修改[请在这里补全代码]的部分，不要修改其他部分。
+题目描述：小明拿到了两个Python列表，第一个列表是他暑假读书的清单，第二个列表是对应的每本书籍的名字。请你建立一个Python字典，把这两个列表转换成一个字典吧！请修改[请在这里补全代码]的部分，不要修改其他部分。
 
 # Python
-def print_string(s):
-    请在这里补全代码
-        print(c)
+books = ["哈利波特与魔法石", "百年孤独", "唐诗300首"]
+authors = ["J.K.罗琳", "加西亚·马尔克斯", "孙洙"]
 
-print_string('Hello, World!')
+book_dict = {}
+for i in range(len(books)):
+    请在这里补全代码
+
+# 建立好字典后，就可以用下面的方法快速查询作者了！
+book_name = "百年孤独"
+author_name = book_dict.get(book_name, "没有找到")
+print(f"{book_name}的作者是{author_name}")
 # ENDPython

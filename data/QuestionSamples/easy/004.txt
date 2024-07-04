@@ -1,0 +1,9 @@
+题目描述：请你用实现一个Python函数，输入一个字符串，然后将字符串中的每个字符打印出来，每个字符打印一行。请修改[请在这里补全代码]的部分，不要修改其他部分。
+
+# Python
+def print_string(s):
+    请在这里补全代码
+        print(c)
+
+print_string('Hello, World!')
+# ENDPython

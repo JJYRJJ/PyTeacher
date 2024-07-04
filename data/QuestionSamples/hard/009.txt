@@ -1,0 +1,29 @@
+题目描述：小明正在读一段英文文档，他想要把文档中的所有不同的单词按照首字母排序，不考虑大小写。首字母是"a"的单词排在最前，首字母是"z"的单词排在最后。每一行输出以一个首字母开头的所有单词，每个相同的单词只输出一次。请修改[请在这里补全代码]的部分，不要修改其他部分。
+
+# Python
+def sort_words(text):
+    # 因为不考虑大小写，所以先把所有单词转换为小写
+    text = 请在这里补全代码
+    # 用空格分割单词
+    words = text.split()
+    # 用字典存储每个首字母开头的单词
+    word_dict = {}
+    for word in words:
+        # 取单词的首字母
+        first_letter = 请在这里补全代码
+        # 如果首字母不在字典中，就添加一个新的键值对，值是一个集合
+        if first_letter not in word_dict:
+            word_dict[first_letter] = set()
+        # 添加单词到对应的集合中，集合会自动去重，可以用set.add()方法来添加元素
+        请在这里补全代码
+    # 从a到z遍历字典，输出每个首字母开头的单词，如果没有就跳过
+    for letter in "abcdefghijklmnopqrstuvwxyz":
+        if letter in word_dict:
+            words = word_dict[letter]
+            # 输出
+            print(letter + ": " + " ".join(words))
+
+# 测试用例
+text = "There is a little dog named Wangwang. Wangwang is a smart dog. Wangwang likes eating meat. Wangwang is a good dog."
+sort_words(text.lower())
+# ENDPython

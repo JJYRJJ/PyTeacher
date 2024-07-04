@@ -1,17 +1,19 @@
-题目描述：给你一个10-99之间的数字，你可以判断它能否被3整出吗？ 请你用Python实现两种不同的函数，输入一个数字，返回True或者False来判断这个数字能否被3整除。请修改[请在这里补全代码]的部分，不要修改其他部分。
+题目描述：找到一个列表中所有偶数的平方，并将结果存储在一个新的列表中。请修改[请在这里补全代码]的部分，不要修改其他部分。
 
 # Python
-# 方法1：判断数字的十位数和个位数之和是否能被3整除，可以用//和%运算符来实现
-def is_divisible_by_3_method1(num):
-    tens = 请在这里补全代码
-    units = 请在这里补全代码
-    return (tens + units) % 3 == 0
+def find_even_squares(numbers):
+    # numbers是一个整数列表
+    even_squares = []
+    for num in numbers:
+        # 判断num是否为偶数
+        if 请在这里补全代码:
+            # 计算num的平方
+            square = 请在这里补全代码
+            # 将平方结果添加到even_squares列表中
+            请在这里补全代码
+    return even_squares
 
-# 方法2：直接判断数字能否被3整除，可以用%运算符来实现
-def is_divisible_by_3_method2(num):
-    return 请在这里补全代码
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+print(find_even_squares(numbers))  # 输出应为 [4, 16, 36, 64, 100]
 
-num = 72
-print(is_divisible_by_3_method1(num))  # 应该输出True
-print(is_divisible_by_3_method2(num))  # 同样应该输出True
 # ENDPython

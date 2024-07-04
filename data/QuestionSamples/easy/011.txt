@@ -1,16 +1,12 @@
-题目描述：小苹想要把她收藏的彩色铅笔按颜色进行分类。她已经按顺序记录了每支铅笔的颜色，请你帮助她统计每种颜色的铅笔有多少支。请修改[请在这里补全代码]的部分，不要修改其他部分。
+题目描述：妮妮有一些宝石，每一枚宝石的重量不同，请你帮助妮妮分别从重量由小到大，和由大到小输出这些重量吧！请修改[请在这里补全代码]的部分，不要修改其他部分。
 
 # Python
-pencil_colors = ["red", "blue", "red", "green", "blue", "yellow", "green", "red"]
-color_count = {}
-
-for color in pencil_colors:
-    if color not in color_count:
-        color_count[color] = 1
-    else:
-        请在这里补全代码
-
-print("每种颜色的铅笔数量是：")
-for color in color_count:
-    print(f'{color}: {color_count[color]}')
+gems = [3, 5, 1, 2, 6, 4, 3]
+# 使用sorted函数对gems进行排序，sorted函数的reverse参数可以控制排序的方向
+# 由小到大
+gems_sorted = sorted(gems)
+print("由小到大：", gems_sorted)
+# 由大到小
+gems_sorted_reverse = 请在这里补全代码
+print("由大到小：", gems_sorted_reverse)
 # ENDPython

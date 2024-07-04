@@ -1,0 +1,50 @@
+题目描述：艾丽斯的魔法图书馆中有许多书架，每个书架上有许多书。每本书有一个名字和页数。请你帮助创建一个嵌套的字典来存储这些书的信息，并找出特定书架中页数最多的书。假设有一个包含多个书架的列表，每个书架包含多个书的信息。请实现代码完成这些功能。请修改[请在这里补全代码]的部分，不要修改其他部分。
+
+# Python
+# 书架列表，每个元素是一个字典，包含多个书的信息
+bookshelves = [
+    {
+        "shelf_name": "Shelf1",
+        "books": [
+            {"name": "BookA", "pages": 200},
+            {"name": "BookB", "pages": 150}
+        ]
+    },
+    {
+        "shelf_name": "Shelf2",
+        "books": [
+            {"name": "BookC", "pages": 300},
+            {"name": "BookD", "pages": 250}
+        ]
+    }
+]
+
+# 创建一个空的嵌套字典
+library = {}
+
+# 遍历书架列表，填充嵌套字典
+for shelf in bookshelves:
+    shelf_name = shelf["shelf_name"]
+    library[shelf_name] = {}
+    for book in shelf["books"]:
+        book_name = book["name"]
+        pages = book["pages"]
+        library[shelf_name][book_name] = 请在这里补全代码
+
+# 找出特定书架中页数最多的书
+def find_largest_book(library, shelf_name):
+    if shelf_name not in library:
+        return None, 0
+    max_pages = 0
+    max_book = None
+    for book_name, pages in library[shelf_name].items():
+        if pages > max_pages:
+            max_pages = 请在这里补全代码
+            max_book = 请在这里补全代码
+    return max_book, max_pages
+
+# 打印结果
+shelf_name = "Shelf2"
+book, pages = find_largest_book(library, shelf_name)
+print(f"{shelf_name}中的页数最多的书是{book}，它有{pages}页")
+# ENDPython

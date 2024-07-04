@@ -86,7 +86,8 @@ class Teacher:
             try:
                 response = self.client.chat.completions.create(
                     model=self.model,
-                    messages=messages
+                    messages=messages,
+                    temperature=self.config["temperature"]
                 )
                 res = response.choices[0].message.content
                 if keywords_all is not None:
@@ -136,7 +137,6 @@ class Teacher:
             self.add_message(messages, f"生成一道具有{n_lines}处代码需要补全的题目，难度系数为{difficulty_desc}", role="user")
 
             response = self.call_chat(messages, keywords_all={"题目描述：": 1, "# Python": 1, "# ENDPython": 1, "请在这里补全代码": n_lines + 1})
-            # log_info("[Question] GPT response: " + response)
         if len(response) == 0:
             return False
 
