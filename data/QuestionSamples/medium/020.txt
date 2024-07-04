@@ -9,5 +9,5 @@ def findNumber(num):
         result += 1
     return result
 
-print(findNumber(10))  # 找到第一个比10大，并且可以被7整除的数字，答案是14
+print(f'第一个比10大，并且可以被7整除的数字是{findNumber(10)}')  # 答案是14
 # ENDPython

@@ -2,13 +2,9 @@
 
 # Python
 # 这四口人的年龄分别是：
-age1 = 7
-age2 = 35
-age3 = 38
-age4 = 4
+ages = [7, 35, 38, 4]
 
-# 请你完成下面的代码来计算他们的平均年龄。
-total_age = age1 + age2 + age3 + age4
+# 请你用一行代码来计算他们的平均年龄。
 average_age = 请在这里补全代码
 
 print("这四个人的平均年龄是：", average_age, "岁")

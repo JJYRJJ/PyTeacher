@@ -9,5 +9,8 @@ def is_prime(num):
             return False
     请在这里补全代码
 
-print(is_prime(213))  # 测试213是否是质数
+print(f'1是不是质数: {is_prime(1)}')
+print(f'2是不是质数: {is_prime(2)}')
+print(f'49是不是质数: {is_prime(21)}')
+print(f'101是不是质数: {is_prime(101)}')
 # ENDPython

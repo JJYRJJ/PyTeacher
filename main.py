@@ -10,14 +10,15 @@ model = Teacher()
 @app.route('/')
 def index():
     model.clear_all_states()
+    model.clear_chat_history()
     return render_template('testindex.html')
 
 
 @app.route('/next_question', methods=['POST'])
 def next_question():
-    # 这里应该有生成新题目描述和代码的函数
     model.clear_all_states()
-    success = model.gen_question()
+    difficulty = request.form['difficulty']
+    success = model.gen_question(difficulty)
     if success:
         problem_description = model.question
         user_code = model.user_answer

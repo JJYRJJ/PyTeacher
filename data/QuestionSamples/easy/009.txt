@@ -3,5 +3,5 @@
 # Python
 hour = 21
 new_hour = 请在这里补全代码
-print(f"6小时之后是{new_hour}点")
+print(f"{hour}点的6小时之后是{new_hour}点")
 # ENDPython

@@ -90,6 +90,28 @@
         button:disabled:hover {
             background-color: inherit; /* Keeps the button background unchanged on hover */
         }
+        label {
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+        select {
+            font-family: 'FontAwesome', Arial, sans-serif;;
+            padding: 5px;
+            font-size: 1em;
+            border: 2px solid;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        select:hover {
+            border-color: #0056b3;
+        }
+        select:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
         .content {
             display: flex;
         }
@@ -152,9 +174,16 @@
         </div>
         <div class="content">
             <div id="left">
-                <button id="next"><i class="fa-regular fa-hand-point-right"></i> 下一题</button>
 
-                <div class="strong-text"><strong>题目描述</strong></div>
+                <label for="options"><i class="fa-solid fa-pen"></i> 难度:</label>
+                <select id="options" name="options" onchange="updateSelectColor()">
+                    <option value="easy" style="color: green;">简单 &#xf299</option>
+                    <option value="medium" style="color: purple;">中等 &#xf042</option>
+                    <option value="hard" style="color: Salmon;">困难 &#xf091</option>
+                </select>
+
+                <button id="next" style="margin-left: 30px;"><i class="fa-regular fa-hand-point-right"></i> 下一题</button>
+
                 <div id="problem_description_display">点击"下一题"开始答题</div>
 
                 <div class="strong-text"><strong>你的代码</strong></div>
@@ -209,8 +238,9 @@
                 $('#problem_description_display').html('<img src="{{ url_for('static', filename='loading.gif') }}" alt="加载中..." class="loading" />');
                 editor.setValue("生成中...");
                 $('#result_display').text('');
+                $('#run_result_display').text('');
                 editor_answer.setValue('');
-                $.post('/next_question', function(data){
+                $.post('/next_question', { 'difficulty': $('#options').val() }, function(data){
                     $('#problem_description_display').text(data.problem_description);
                     editor.setValue(data.user_code);
                     enableAllButtons();
@@ -309,7 +339,17 @@
             handleInput();
         }
 
+        function updateSelectColor() {
+            var select = document.getElementById("options");
+            var selectedOption = select.options[select.selectedIndex];
+            select.style.color = selectedOption.style.color;
+        }
+
         document.addEventListener('DOMContentLoaded', handleInput);
+
+        window.onload = function() {
+            updateSelectColor();
+        };
     </script>
 </body>
 </html>

@@ -25,9 +25,13 @@ class Teacher:
             self.prompt_Chat = f.read()
         self.max_retry = self.config["max_retry"]
 
-        # 题目相关初始化
+        # 初始化
         self.question = ""
         self.n_example = self.config["n_example"]
+        # 难度和需要补全的行数
+        self.difficulty_dict = {'easy': ["简单:理解基本的Python语法和概念，如变量、数据类型、简单的输入输出", 1],
+                                'medium': ["中等:掌握基本的控制结构(如条件语句和循环)以及和基本的数据结构（如列表、字典），能够进行简单的数据处理", 2],
+                                'hard': ["困难:能够正确地综合使用数据结构和语法解决较复杂的问题", 3]}
         self.init_code = ""
         self.user_answer = ""
         self.is_correct = False
@@ -44,17 +48,40 @@ class Teacher:
         message = {"role": role, "content": text}
         messages.append(message)
 
+    @staticmethod
+    def check_all_keywords(s, keywords):
+        assert isinstance(keywords, (list, dict)), "keywords must be a list or a dict"
+        if isinstance(keywords, list):
+            return all(keyword in s for keyword in keywords)
+        if isinstance(keywords, dict):
+            for keyword, count in keywords.items():
+                if s.count(keyword) != count:
+                    return False
+            return True
+        return False
+
+    @staticmethod
+    def check_any_keywords(s, keywords):
+        assert isinstance(keywords, (list, dict)), "keywords must be a list or a dict"
+        if isinstance(keywords, list):
+            return any(keyword in s for keyword in keywords)
+        if isinstance(keywords, dict):
+            for keyword, count in keywords.items():
+                if s.count(keyword) == count:
+                    return True
+            return False
+        return False
+
     def clear_all_states(self):
         self.question = ""
         self.init_code = ""
         self.user_answer = ""
         self.is_correct = False
         self.explanation = ""
-        self.chat_history = []
 
     def call_chat(self, messages, keywords_all=None, keywords_any=None):
-        # keywords_all: list, response中必须包含所有的关键词
-        # keywords_any: list, response中必须包含任意一个关键词
+        # keywords_all: list - response中必须包含所有的关键词，或者 dict - response中必须包含所有的关键词，且出现对应次数
+        # keywords_any: list - response中必须包含任意一个关键词，或者 dict - response中必须包含任意一个关键词，且出现对应次数
         for _ in range(self.max_retry):
             try:
                 response = self.client.chat.completions.create(
@@ -63,26 +90,28 @@ class Teacher:
                 )
                 res = response.choices[0].message.content
                 if keywords_all is not None:
-                    if all(keyword in res for keyword in keywords_all):
+                    if self.check_all_keywords(res, keywords_all):
                         return res
                     else:
                         continue
                 if keywords_any is not None:
-                    if any(keyword in res for keyword in keywords_any):
+                    if self.check_any_keywords(res, keywords_any):
                         return res
                     else:
                         continue
                 return response.choices[0].message.content
             except Exception as e:
+                log_error(f"error message: {e}")
                 continue
-        log_error("Failed to get response from Azure OpenAI")
-        log_error(f"error message: {e}")
+        log_error("Failed to get response from Azure OpenAI after max retry times.")
         return ""
 
-    def gen_question(self):
+    def gen_question(self, difficulty='easy'):
         # 生成题目，随机选择一个question example，替换prompt中的example
         self.clear_all_states()
-        datapath = self.config["data_dir"]
+        datapath = os.path.join(self.config["data_dir"], difficulty)
+        difficulty_word, difficulty_desc = self.difficulty_dict[difficulty][0].split(':')
+        n_lines = self.difficulty_dict[difficulty][1]
         examples = os.listdir(datapath)
         examples = [e for e in examples if e.endswith(".txt")]
         if random.random() < self.p_useSample:
@@ -98,14 +127,17 @@ class Teacher:
                 with open(os.path.join(datapath, example_path), "r", encoding='utf-8') as f:
                     example = f.read()
                     example_str += f"示例{i + 1}:\n{example}\n\n"
-            prompt = self.prompt_genQuestion.replace("#EXAMPLE#", example_str)
+            prompt = self.prompt_genQuestion.replace("#DIFFICULTY#", difficulty_word)\
+                .replace("#DIFFICULTY_DESC#", difficulty_desc)\
+                .replace("#N_LINES#", str(n_lines))\
+                .replace("#EXAMPLE#", example_str)
             messages = []
             self.add_message(messages, prompt, role="system")
-            self.add_message(messages, "生成一道题目", role="user")
+            self.add_message(messages, f"生成一道具有{n_lines}处代码需要补全的题目，难度系数为{difficulty_desc}", role="user")
 
-            response = self.call_chat(messages, keywords_all=["题目描述：", "# Python", "# ENDPython"])
+            response = self.call_chat(messages, keywords_all={"题目描述：": 1, "# Python": 1, "# ENDPython": 1, "请在这里补全代码": n_lines + 1})
             # log_info("[Question] GPT response: " + response)
-        if not (len(response) > 0 and "题目描述：" in response and "# Python" in response and "# ENDPython" in response):
+        if len(response) == 0:
             return False
 
         for line in response.split("\n"):

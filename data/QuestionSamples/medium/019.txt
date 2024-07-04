@@ -6,5 +6,6 @@ def print_seven(num):
         请在这里补全代码:
             print(i)
 
+print('1到100中能被7整除的数字有：')
 print_seven(100)  # 打印出1到100中所有能够被7整除的数字
 # ENDPython

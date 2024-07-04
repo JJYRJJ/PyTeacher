@@ -11,5 +11,8 @@ def is_triangle(a, b, c):
 carrot1 = 3
 carrot2 = 4
 carrot3 = 5
-print(is_triangle(carrot1, carrot2, carrot3))  # YES
+if is_triangle(carrot1, carrot2, carrot3):
+    print(f'长度{carrot1}, {carrot2}, {carrot3}能够组成三角形')
+else:
+    print(f'长度{carrot1}, {carrot2}, {carrot3}不能组成三角形')
 # ENDPython

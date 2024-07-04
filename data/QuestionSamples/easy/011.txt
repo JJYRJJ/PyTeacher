@@ -10,5 +10,7 @@ for color in pencil_colors:
     else:
         请在这里补全代码
 
-print("每种颜色的铅笔数量是：", color_count)
+print("每种颜色的铅笔数量是：")
+for color in color_count:
+    print(f'{color}: {color_count[color]}')
 # ENDPython
