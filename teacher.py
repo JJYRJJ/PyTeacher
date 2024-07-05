@@ -202,3 +202,20 @@ class Teacher:
 
     def clear_chat_history(self):
         self.chat_history = []
+
+    def __getstate__(self):
+        # 返回需要序列化的状态
+        state = self.__dict__.copy()
+        # 删除不需要序列化的属性
+        del state['client']
+        return state
+
+    def __setstate__(self, state):
+        # 恢复对象状态
+        self.__dict__.update(state)
+        # 重新初始化Azure OpenAI客户端
+        self.client = AzureOpenAI(
+            api_key=self.config["api_key"],
+            azure_endpoint=self.config["endpoint"],
+            api_version=self.config["api_version"]
+        )

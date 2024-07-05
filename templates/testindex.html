@@ -350,6 +350,10 @@
         window.onload = function() {
             updateSelectColor();
         };
+
+        window.onbeforeunload = function() {
+            navigator.sendBeacon('/clear_session');
+        };
     </script>
 </body>
 </html>
