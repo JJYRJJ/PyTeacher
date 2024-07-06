@@ -1,6 +1,8 @@
 # comment this line if any update in config.json
 config.json
 
+flask_session/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
