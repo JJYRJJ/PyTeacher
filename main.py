@@ -4,6 +4,7 @@ from flask_session import Session
 from redis import Redis
 from teacher import Teacher
 from utils import execute_code
+import uuid
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
@@ -15,8 +16,10 @@ Session(app)
 
 @app.before_request
 def before_request():
+    if 'session_id' not in session:
+        session['session_id'] = str(uuid.uuid4())
     if 'teacher' not in session:
-        session['teacher'] = jsonpickle.encode(Teacher())
+        session['teacher'] = jsonpickle.encode(Teacher(config_path="config.json", teacher_id=session['session_id']))
 
 @app.route('/clear_session', methods=['POST'])
 def clear_session():

@@ -11,5 +11,8 @@
   "prompt_Chat": "prompts/Chat.txt",
   "n_example": 3,
   "p_useSample": 0.1,
-  "max_chat_turn": 10
+  "max_chat_turn": 10,
+  "save_question": true,
+  "save_question_dir": "data/UnverifiedQuestions",
+  "prompt_CheckQuestion": "prompts/CheckQuestion.txt"
 }

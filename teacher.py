@@ -1,11 +1,15 @@
 import random
 import os
+import time
 from openai import AzureOpenAI
 from utils import load_config, log_info, log_error
 
 
 class Teacher:
-    def __init__(self, config_path="config.json"):
+    def __init__(self, config_path="config.json", teacher_id=None):
+        if teacher_id is not None:
+            self.teacher_id = teacher_id
+
         self.config = load_config(config_path)
         # Azure OpenAI 初始化
         api_key = self.config["api_key"]
@@ -40,7 +44,7 @@ class Teacher:
         self.chat_history = []
         self.max_chat_turn = self.config["max_chat_turn"]
 
-        log_info("Teacher initialized")
+        log_info(f"Teacher initialized, id = {self.teacher_id}")
 
     @staticmethod
     def add_message(messages, text, role):
@@ -115,7 +119,8 @@ class Teacher:
         n_lines = self.difficulty_dict[difficulty][1]
         examples = os.listdir(datapath)
         examples = [e for e in examples if e.endswith(".txt")]
-        if random.random() < self.p_useSample:
+        use_example = random.random() < self.p_useSample
+        if use_example:
             example_path = random.choice(examples)
             with open(os.path.join(datapath, example_path), "r", encoding='utf-8') as f:
                 response = f.read()
@@ -139,7 +144,7 @@ class Teacher:
             response = self.call_chat(messages, keywords_all={"题目描述：": 1, "# Python": 1, "# ENDPython": 1, "请在这里补全代码": n_lines + 1})
         if len(response) == 0:
             return False
-
+        
         for line in response.split("\n"):
             if "题目描述：" in line:
                 self.question = line.split("题目描述：", 1)[1]
@@ -149,6 +154,10 @@ class Teacher:
         init_code = response[start + 8:end].strip()
         self.init_code = init_code
         self.user_answer = init_code
+
+        if not use_example and self.config["save_question"]:
+            self.save_question(response)
+
         return True
 
     def check_answer(self, user_answer=None):
@@ -202,6 +211,29 @@ class Teacher:
 
     def clear_chat_history(self):
         self.chat_history = []
+    
+    def save_question(self, question):
+        save_dir = self.config['save_question_dir']
+        # 保存题目为save_dir/[teacher_id]_[timestamp].txt
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+        
+        # 难度：统计“请在这里补全代码”的次数
+        n_lines = question.count("请在这里补全代码")
+        if n_lines == self.difficulty_dict['easy'][1] + 1:
+            difficulty = "easy"
+        elif n_lines == self.difficulty_dict['medium'][1] + 1:
+            difficulty = "medium"
+        elif n_lines == self.difficulty_dict['hard'][1] + 1:
+            difficulty = "hard"
+        else:
+            return
+
+        prefix = self.teacher_id if self.teacher_id is not None else "unknown"
+        filepath = os.path.join(save_dir, f"{prefix}_{int(time.time())}_{difficulty}.txt")
+        with open(filepath, "w", encoding='utf-8') as f:
+            f.write(question)
+        log_info(f"Question saved to {filepath}")
 
     def __getstate__(self):
         # 返回需要序列化的状态

@@ -1,0 +1,12 @@
+题目描述：妮妮有一些宝石，每一枚宝石的重量不同，请你帮助妮妮分别从重量由小到大，和由大到小输出这些重量吧！请修改[请在这里补全代码]的部分，不要修改其他部分。
+
+# Python
+gems = [3, 5, 1, 2, 6, 4, 3]
+# 使用sorted函数对gems进行排序，sorted函数的reverse参数可以控制排序的方向
+# 由小到大
+gems_sorted = sorted(gems)
+print("由小到大：", gems_sorted)
+# 由大到小
+gems_sorted_reverse = 请在这里补全代码
+print("由大到小：", gems_sorted_reverse)
+# ENDPython
