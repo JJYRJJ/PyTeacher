@@ -1,6 +1,6 @@
 # PyTeacher
 ## Introduction
-PyTeacher helps you to create a simple and interactive quiz for new Chinese Python learners. It leverages LLMs to generate code filling questions, check answers, and discuss any problem. It can also enrich the quiz by analyzing the generated questions. Hope it can play as a helpful teacher for children who are just starting to learn Python.
+PyTeacher helps you to create a simple and interactive quiz for new Chinese Python learners. It leverages LLMs to generate code filling questions, check answers, and discuss any problem. It can also enrich the quiz by validating the generated questions. Hope it can play as a helpful teacher for children who are just starting to learn Python. Visit http://20.243.206.18:5000/ to see our demo.
 
 ![Screenshot.png](Screenshot.png)
 
@@ -17,7 +17,7 @@ PyTeacher helps you to create a simple and interactive quiz for new Chinese Pyth
     ```bash
     pip install -r requirements.txt
     ```
-3. Run Pyteacher by guniorn
+3. Deploy Pyteacher by guniorn
     ```bash
     gunicorn -w 10 -b 0.0.0.0:5000 main:app
     ```
