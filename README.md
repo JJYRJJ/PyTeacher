@@ -9,7 +9,7 @@ PyTeacher helps you to create a simple and interactive quiz for new Chinese Pyth
 - **Code running**: Users can run the code and get the outputs. 
 - **Answer Checking**: Users can check the submissions and show explanations why the answer is correct or wrong.
 - **Chat System**: Users can use the chat feature for real-time discussions.
-- **New question collection**: In the beginning, we provide some questions examples for LLM. During the usage, another LLM can be used to analyze the generated questions and enrich the question bank.
+- **New question collection**: In the beginning, we provide some questions examples for LLM. During the usage, another LLM can be used to validate the generated questions and enrich the question bank.
 
 ## Installation
 1. Clone the repository
