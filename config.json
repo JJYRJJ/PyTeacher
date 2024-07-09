@@ -14,5 +14,6 @@
   "max_chat_turn": 10,
   "save_question": true,
   "save_question_dir": "data/UnverifiedQuestions",
+  "wrong_question_dir": "data/WrongQuestions",
   "prompt_CheckQuestion": "prompts/CheckQuestion.txt"
 }

@@ -1,6 +1,6 @@
 # PyTeacher
 ## Introduction
-PyTeacher helps you to create a simple and interactive quiz for new Chinese Python learners. It leverages LLMs to generate code filling questions, check answers, and discuss any problem. It can also enrich the quiz by validating the generated questions. Hope it can play as a helpful teacher for children who are just starting to learn Python. 
+PyTeacher helps you to create a simple and interactive quiz for new Chinese Python learners. It leverages LLMs to generate code filling questions, check answers, and discuss any problem. It can also enrich the quiz and improve the question generator by validating questions. Hope it can play as a helpful teacher for children who are just starting to learn Python. 
 
 The project is based on Python Flask and Azure OpenAI API. Visit http://20.243.206.18:5000/ to see our demo.
 
@@ -9,9 +9,9 @@ The project is based on Python Flask and Azure OpenAI API. Visit http://20.243.2
 ## Features
 - **Quiz Creation**: Users can create programming quizzes with different difficulty levels.
 - **Code running**: Users can run the code and get the outputs. 
-- **Answer Checking**: Users can check the submissions and show explanations why the answer is correct or wrong.
-- **Chat System**: Users can use the chat feature for real-time discussions.
-- **New question collection**: In the beginning, we provide some questions examples for LLM. During the usage, another LLM can be used to validate the generated questions and enrich the question bank.
+- **Answer Checking**: Users can check their codes with or without displaying the correct answer and explanation.
+- **Chat System**: Users can have real-time discussions with a virtual teacher.
+- **Question validation**: An LLM can be used to validate the generated questions, enriching the question bank, and analyzing the mistakes in questions to help you improve the prompt.
 
 ## Installation
 1. Clone the repository
@@ -25,7 +25,7 @@ The project is based on Python Flask and Azure OpenAI API. Visit http://20.243.2
     gunicorn -w 10 -b 0.0.0.0:5000 main:app
     ```
 5. Open the browser and visit `http://<your machine ip>:5000`
-6. (Optional) Run new question collector
+6. (Optional) Run question validator
     ```bash
     python checkQuestions.py
     ```

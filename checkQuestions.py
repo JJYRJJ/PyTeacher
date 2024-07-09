@@ -29,6 +29,8 @@ class QuestionChecker():
         self.file_index_dict['medium'] = self._get_difficulty_file_index('medium')
         self.file_index_dict['hard'] = self._get_difficulty_file_index('hard')
 
+        os.makedirs(self.config['wrong_question_dir'], exist_ok=True)
+
     def call_chat(self, messages, keywords_all=None, keywords_any=None):
         # keywords_all: list - response中必须包含所有的关键词，或者 dict - response中必须包含所有的关键词，且出现对应次数
         # keywords_any: list - response中必须包含任意一个关键词，或者 dict - response中必须包含任意一个关键词，且出现对应次数
@@ -92,19 +94,34 @@ class QuestionChecker():
             question = f.read()
         difficulty = filepath.split('_')[-1].split('.')[0]
         prompt = self.prompt_CheckQuestion.replace("#QUESTION#", question)
-        response = self.call_chat([{"role": 'system', "content": prompt}], keywords_any=["检查结果"])
+        response = self.call_chat([{"role": 'system', "content": prompt}], keywords_any=["错误原因"])
         is_valid = False
+        mistake_class = None
         for line in response.split('\n'):
-            if "检查结果" in line and "正确" in line:
-                is_valid = True
-                save_filepath = os.path.join(self.config['data_dir'], difficulty, '{:06d}.txt'.format(self.file_index_dict[difficulty] + 1))
-                with open(save_filepath, 'w', encoding='utf-8') as f:
-                    f.write(question)
-                self.file_index_dict[difficulty] += 1
-                log_info(f"Question {filepath} is saved to {save_filepath}")
+            if "错误原因" in line:
+                if '[0] 无' in line:  # 如果正确，保存到题库
+                    is_valid = True
+                    save_filepath = os.path.join(self.config['data_dir'], difficulty, '{:06d}.txt'.format(self.file_index_dict[difficulty] + 1))
+                    with open(save_filepath, 'w', encoding='utf-8') as f:
+                        f.write(question)
+                    self.file_index_dict[difficulty] += 1
+                    log_info(f"Question {filepath} is saved to {save_filepath}")
+                elif '[1]' in line:
+                    mistake_class = '1'
+                elif '[2]' in line:
+                    mistake_class = '2'
+                elif '[3]' in line:
+                    mistake_class = '3'
+                elif '[4]' in line:
+                    mistake_class = '4'
                 break
-        if not is_valid:
-            log_info(f"Question is invalid: {filepath}")
+
+        # 如果错误，保存到错题库
+        if not is_valid and mistake_class is not None:
+            save_filepath = os.path.join(self.config['wrong_question_dir'], mistake_class + "_" + os.path.basename(filepath))
+            with open(save_filepath, 'w', encoding='utf-8') as f:
+                f.write(question)
+            log_info(f"Question {filepath} is saved to {save_filepath}")
         os.remove(filepath)
     
     def _get_difficulty_file_index(self, difficulty):
@@ -121,10 +138,12 @@ if __name__ == '__main__':
 
     while True:
         now = datetime.datetime.now()
-        log_info(f"[{now.strftime('%Y-%m-%d %H:%M:%S')}]: Checking questions...")
-        for file in os.listdir(question_dir):
-            filepath = os.path.join(question_dir, file)
-            qc.check(filepath)
-            time.sleep(5)
-        print('\n')
-        time.sleep(60)
+        files = os.listdir(question_dir)
+        if len(files) > 0:
+            log_info(f"[{now.strftime('%Y-%m-%d %H:%M:%S')}]: Start checking questions...")
+            for file in files:
+                filepath = os.path.join(question_dir, file)
+                qc.check(filepath)
+                time.sleep(5)
+            print('\n')
+        time.sleep(600)
