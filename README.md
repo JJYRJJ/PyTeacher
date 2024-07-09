@@ -1,10 +1,12 @@
 # PyTeacher
 ## Introduction
-PyTeacher helps you to create a simple and interactive quiz for new Chinese Python learners. It leverages LLMs to generate code filling questions, check answers, and discuss any problem. It can also enrich the quiz and improve the question generator by validating questions. Hope it can play as a helpful teacher for children who are just starting to learn Python. 
-
-The project is based on Python Flask and Azure OpenAI API. Visit http://20.243.206.18:5000/ to see our demo.
+PyTeacher helps you to create a simple and interactive quiz for new Chinese Python learners. It leverages LLMs to generate code filling questions, check answers, and discuss any problem. It can also enrich the quiz and improve the question generator by validating questions. Hope it can play as a helpful teacher for children who are just starting to learn Python. The project is based on Python Flask.
 
 ![Screenshot.png](Screenshot.png)
+
+## Requirement
+- Azure OpenAI API
+- A linux workstation for the deployment
 
 ## Features
 - **Quiz Creation**: Users can create programming quizzes with different difficulty levels.
@@ -29,6 +31,7 @@ The project is based on Python Flask and Azure OpenAI API. Visit http://20.243.2
     ```bash
     python checkQuestions.py
     ```
+    By default new questions will be saved in ```data/UnverifiedQuestions/```. If a question is valid, it will be moved to ```data/QuestionSamples/```, otherwise it will be moved to ```data/WrongQuestions/```.
 
 ## License
 This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) License. This means you are free to:
