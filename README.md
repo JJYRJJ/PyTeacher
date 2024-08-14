@@ -16,18 +16,27 @@ PyTeacher helps you to create a simple and interactive quiz for new Chinese Pyth
 - **Question validation**: An LLM can be used to validate the generated questions, enriching the question bank, and analyzing the mistakes in questions to help you improve the prompt.
 
 ## Installation
-1. Clone the repository
-2. Install the required packages
+- Clone the repository
+- Install Redis
+    ```bash
+    sudo apt install redis-server
+    ```
+- Start Redis
+    ```bash
+    sudo systemctl start redis
+    ```
+- Install the required packages
     ```bash
     pip install -r requirements.txt
     ```
-3. Update ```config.json```, fill into your Azure OpenAI API information.
-4. Deploy Pyteacher by gunicorn
+- Make sure your server allows incoming traffic through port 5000 (or any other port) in the server’s security group. For example, if you are using an Azure virtual machine, create a "AllowAnyCustom5000Inbound" rule.
+- Update ```config.json```, fill into your Azure OpenAI API information.
+- Deploy Pyteacher by gunicorn
     ```bash
     gunicorn -w 10 -b 0.0.0.0:5000 main:app
     ```
-5. Open the browser and visit `http://<your machine ip>:5000`
-6. (Optional) Run question validator
+- Open the browser and visit `http://<your machine ip>:5000`
+- (Optional) Run question validator
     ```bash
     python checkQuestions.py
     ```
