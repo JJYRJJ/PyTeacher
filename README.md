@@ -17,25 +17,21 @@ PyTeacher helps you to create a simple and interactive quiz for new Chinese Pyth
 
 ## Installation
 - Clone the repository
-- Install Redis
+- Install and run Redis
     ```bash
     sudo apt install redis-server
-    ```
-- Start Redis
-    ```bash
-    sudo systemctl start redis
+    redis-server
     ```
 - Install the required packages
     ```bash
     pip install -r requirements.txt
     ```
-- Make sure your server allows incoming traffic through port 5000 (or any other port) in the server’s security group. For example, if you are using an Azure virtual machine, create a "AllowAnyCustom5000Inbound" rule.
 - Update ```config.json```, fill into your Azure OpenAI API information.
 - Deploy Pyteacher by gunicorn
     ```bash
     gunicorn -w 10 -b 0.0.0.0:5000 main:app
     ```
-- Open the browser and visit `http://<your machine ip>:5000`
+- Open the browser and visit `http://<your machine ip>:5000`. Make sure your server allows incoming traffic through port 5000 (or any other port) in the server’s security group. For example, if you are using an Azure virtual machine, create a "AllowAnyCustom5000Inbound" rule.
 - (Optional) Run question validator
     ```bash
     python checkQuestions.py
