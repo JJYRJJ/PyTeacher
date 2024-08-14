@@ -29,6 +29,7 @@ class QuestionChecker():
         self.file_index_dict['medium'] = self._get_difficulty_file_index('medium')
         self.file_index_dict['hard'] = self._get_difficulty_file_index('hard')
 
+        os.makedirs(self.config['save_question_dir'], exist_ok=True)
         os.makedirs(self.config['wrong_question_dir'], exist_ok=True)
 
     def call_chat(self, messages, keywords_all=None, keywords_any=None):
